@@ -1,0 +1,45 @@
+# Compiled class file
+*.class
+
+# Package Files #
+*.jar
+
+# Maven
+target
+
+# IDEA
+.idea
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.settings/
+.svn/
+.classpath
+.project
+.myeclipse/
+.externalToolBuilders
+.springBeans
+.factorypath
+
+# Mac
+.DS_Store
+
+# logs
+logs/
+**/log
+*.log
+
+# local la._51.xiecha.config file for every individual coder
+application-local.yml
+application-local.properties
+
+bin/
+
+# logPath_IS_UNDEFINED
+**/logPath_IS_UNDEFINED/
+
+
+#
+weixinDebugConfig.properties

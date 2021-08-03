@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration scan="true" scanPeriod="60000">
+	<!-- scan:默认为true。作用：当设置为true时，如果配置文件发生改变，将会被重新加载。 scanPeriod：默认时间间隔为1分钟，默认单位是毫秒，当scan为true时，此属性生效。作用：检测配置文件是否有修改时间间隔。 -->
+	<!-- application.properties中配置的变量 -->
+	<springProperty scope="context" name="logLevel" source="logging.level.root" defaultValue="info" />
+	<springProperty scope="context" name="logPath" source="logging.path" defaultValue="log" />
+	<springProperty scope="context" name="logName" source="logging.file" defaultValue="test-service" />
+	<springProperty scope="context" name="logKeepDays" source="logging.logKeepDays" defaultValue="14"/>
+
+	<appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] - [%-5level] - %logger{50} - %msg%n</pattern>
+		</layout>
+	</appender>
+	<appender name="fileLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<!--<level>INFO</level> --><!-- 配置用于过滤指定级别的，例如这里配置INFO级别的就拒绝（DENY）非INFO就ACCEPT -->
+			<onMatch>DENY</onMatch>
+			<onMismatch>ACCEPT</onMismatch>
+		</filter>
+		<encoder>
+			<!-- <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %caller{1} - %msg%n</pattern> -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] - [%-5level] - %logger{50} - %msg%n</pattern>
+		</encoder>
+		<!-- 滚动策略 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 路径 -->
+			<fileNamePattern>${logPath}${file.separator}${logName}.%d.log</fileNamePattern>
+			<maxHistory>${logKeepDays}</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<!-- 异常请求 -->
+	<appender name="badRequestAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logPath}${file.separator}bad.request.%d.log</fileNamePattern>
+			<maxHistory>${logKeepDays}</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="badRequestLogger" additivity="false" level="INFO">
+		<appender-ref ref="badRequestAppender" />
+	</logger>
+
+	<root level="${logLevel}">
+		<appender-ref ref="consoleLog" />
+		<appender-ref ref="fileLog" />
+	</root>
+</configuration>
